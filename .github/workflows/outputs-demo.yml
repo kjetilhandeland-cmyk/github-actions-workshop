@@ -23,13 +23,13 @@ jobs:
       - name: Get branch name
         id: branch
         run: |
-         SHA=$(git rev-parse --abbrev-ref HEAD)
-         echo "sha=$SHA" >> $GITHUB_OUTPUT
+         BRANCH=$(git rev-parse --abbrev-ref HEAD)
+         echo "branch=$BRANCH" >> $GITHUB_OUTPUT
       - name: Get commit message
         id: message
         run: |
             MESSAGE=$(git log -1 --pretty=%B)
-            echo "sha=$MESSAGE" >> $GITHUB_OUTPUT
+            echo "message=$MESSAGE" >> $GITHUB_OUTPUT
 
   Build:
     name: Build project
