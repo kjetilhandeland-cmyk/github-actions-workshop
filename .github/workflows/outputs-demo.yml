@@ -9,8 +9,8 @@ jobs:
     outputs:
 
       commit-sha: ${{ steps.commit.outputs.sha }}
-      branch: ${{ steps.version.outputs.branch }}
-      message: ${{ steps.build.outputs.message }}
+      branch-name: ${{ steps.version.outputs.name }}
+      commit-message: ${{ steps.build.outputs.text }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -20,16 +20,18 @@ jobs:
         run: |
           SHA=$(git rev-parse --short HEAD)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
+
       - name: Get branch name
         id: branch
         run: |
          BRANCH=$(git rev-parse --abbrev-ref HEAD)
-         echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+         echo "name=$BRANCH" >> $GITHUB_OUTPUT
+
       - name: Get commit message
         id: message
         run: |
             MESSAGE=$(git log -1 --pretty=%B)
-            echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+            echo "text=$MESSAGE" >> $GITHUB_OUTPUT
 
   Build:
     name: Build project
@@ -60,5 +62,5 @@ jobs:
         run: |
           echo "Build Summary:"
           echo "Commit SHA: ${{ needs.Info.outputs.commit-sha }}"
-          echo "Branch: ${{ needs.Info.outputs.branch }}"
-          echo "Commit Message: ${{ needs.Info.outputs.message }}"
+          echo "Branch: ${{ needs.Info.outputs.branch-name }}"
+          echo "Commit Message: ${{ needs.Info.outputs.commit-message }}"
