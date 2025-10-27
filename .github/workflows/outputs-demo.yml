@@ -12,19 +12,22 @@ jobs:
       branch: ${{ steps.version.outputs.branch }}
       message: ${{ steps.build.outputs.message }}
     steps:
-     - name: Get commit SHA
-       id: commit
-       run: |
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Get commit SHA
+        id: commit
+        run: |
           SHA=$(git rev-parse --short HEAD)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
-     - name: Get branch name
-       id: branch
-       run: |
+      - name: Get branch name
+        id: branch
+        run: |
          SHA=$(git rev-parse --abbrev-ref HEAD)
          echo "sha=$SHA" >> $GITHUB_OUTPUT
-     - name: Get commit message
-       id: message
-       run: |
+      - name: Get commit message
+        id: message
+        run: |
             MESSAGE=$(git log -1 --pretty=%B)
             echo "sha=$MESSAGE" >> $GITHUB_OUTPUT
 
