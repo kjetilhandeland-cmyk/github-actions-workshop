@@ -1,0 +1,79 @@
+ame: Artifacts Demo
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+          retention-days: 5
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+          if: always()
+          name: coverage-reports
+          path: coverage/
+          retention-days: 30
+
+  report:
+    needs: [ build, test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: List build artifacts
+        run: |
+          echo "Build artifacts:"
+          ls -la dist/
+
+      - name: List coverage artifacts
+        run: |
+          echo "Coverage artifacts:"
+          ls -la coverage/
+
+      - name: Success message
+        run: echo "Build and test artifacts successfully collected"
