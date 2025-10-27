@@ -1,4 +1,4 @@
-ame: Artifacts Demo
+name: Artifacts Demo
 
 on:
   pull_request:
