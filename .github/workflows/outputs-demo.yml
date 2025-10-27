@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       commit-sha: ${{ steps.commit.outputs.sha }}
-      branch-name: ${{ steps.version.outputs.name }}
-      commit-message: ${{ steps.build.outputs.text }}
+      branch-name: ${{ steps.branch.outputs.name }}
+      commit-message: ${{ steps.message.outputs.text }}
 
     steps:
       - name: Checkout repository
