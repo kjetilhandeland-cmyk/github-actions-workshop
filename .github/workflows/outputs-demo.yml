@@ -1,0 +1,61 @@
+on:
+  - push
+
+jobs:
+  Info:
+    name: Gather information
+
+    runs-on: ubuntu-latest
+    outputs:
+
+      commit-sha: ${{ steps.commit.outputs.sha }}
+      branch: ${{ steps.version.outputs.branch }}
+      message: ${{ steps.build.outputs.message }}
+    steps:
+     - name: Get commit SHA
+       id: commit
+       run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+     - name: Get branch name
+       id: branch
+       run: |
+         SHA=$(git rev-parse --abbrev-ref HEAD)
+         echo "sha=$SHA" >> $GITHUB_OUTPUT
+     - name: Get commit message
+       id: message
+       run: |
+            MESSAGE=$(git log -1 --pretty=%B)
+            echo "sha=$MESSAGE" >> $GITHUB_OUTPUT
+
+  Build:
+    name: Build project
+    runs-on: ubuntu-latest
+    needs: Info
+    steps:
+
+        # Remember we have to check out the repository first!
+        - name: Checkout repository
+          uses: actions/checkout@v5
+
+        # This step installs the dependencies
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Print what I build
+          run: |
+            echo "Building commit ${{ needs.Info.outputs.commit-sha }} on branch ${{ needs.Info.outputs.branch }}"
+        - name: Build
+          run: npm run build
+
+  Summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: [Info, Build]
+    steps:
+      - name: Print summary
+        run: |
+          echo "Build Summary:"
+          echo "Commit SHA: ${{ needs.Info.outputs.commit-sha }}"
+          echo "Branch: ${{ needs.Info.outputs.branch }}"
+          echo "Commit Message: ${{ needs.Info.outputs.message }}"
