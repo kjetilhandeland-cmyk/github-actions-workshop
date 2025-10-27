@@ -49,7 +49,7 @@ jobs:
 
         - name: Print what I build
           run: |
-            echo "Building commit ${{ needs.Info.outputs.commit-sha }} on branch ${{ needs.Info.outputs.branch }}"
+            echo "Building commit ${{ needs.Info.outputs.commit-sha }} on branch ${{ needs.Info.outputs.branch-name }}"
         - name: Build
           run: npm run build
 
